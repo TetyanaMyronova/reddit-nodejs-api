@@ -1,10 +1,12 @@
+'use strict'
+
 // load the mysql library
 var mysql = require('promise-mysql');
 
 // create a connection to our Cloud9 server
 var connection = mysql.createPool({
     host     : 'localhost',
-    user     : 'ziad_saab', // CHANGE THIS :)
+    user     : 'tamyr',
     password : '',
     database: 'reddit',
     connectionLimit: 10
@@ -18,8 +20,8 @@ var myReddit = new RedditAPI(connection);
 // We call this function to create a new user to test our API
 // The function will return the newly created user's ID in the callback
 myReddit.createUser({
-    username: 'PM_ME_CUTES',
-    password: 'abc123'
+    username: 'userName19',
+    password: 'userPassword1'
 })
     .then(newUserId => {
         // Now that we have a user ID, we can use it to create a new post
@@ -29,7 +31,7 @@ myReddit.createUser({
         return myReddit.createPost({
             title: 'Hello Reddit! This is my first post',
             url: 'http://www.digg.com',
-            userId: newUserId
+            userId: 1
         });
     })
     .then(newPostId => {
@@ -39,3 +41,17 @@ myReddit.createUser({
     .catch(error => {
         console.log(error.stack);
     });
+    // .then(function() {
+    //     return connection.end()
+    // });
+
+    myReddit.getAllPosts()
+        .then(function (result) {console.log(result);});
+
+
+//Test insert into subreddits
+/*
+var test = {
+    name : "blah test",
+    description: "blah test desc"
+};*/
