@@ -58,12 +58,74 @@ class RedditAPI {
          */
         return this.conn.query(
                 `
-            SELECT 'Success'`
+            SELECT p.id, p.title, p.url, p.userId, p.createdAt, p.updatedAt, u.username as userName, u.createdAt as uCreatedAt, u.updatedAt as uUpdatedAt
+            FROM posts p
+            JOIN users u ON u.id = p.userId
+            ORDER BY p.createdAt DESC
+            LIMIT 25`
             )
             .then(result => {
-                return 'Success';
+                return result.map(function(post) {
+                    return {
+                        id: post.id,
+                        title: post.title,
+                        url: post.url,
+                        createdAt: post.createdAt,
+                        updatedAt: post.updatedAt,
+                        user: {
+                            id: post.userId,
+                            name: post.userName,
+                            createdAd: post.uCreatedAt,
+                            updatedAt: post.uUpdatedAt
+                        }
+                    }
+                });
             });
+        }
+        
+    createSubreddit(subreddit) {
+        return this.conn.query(
+        `
+            INSERT INTO subreddits(name, description, createdAt, updatedAt)
+            VALUES (?, ?, NOW(), NOW())`,
+            [subreddit.name, subreddit.description]
+        )
+        .then(result => {
+            return result.insertId;
+        })
+        .catch(error => {
+            if (error.code === 'ER_DUP_ENTRY') {
+                throw new Error('A subreddit with this name already exists');
+            }
+            else {
+                throw error;
+            }
+        });
     }
+    
+    getAllSubreddits() {
+        return this.conn.query (
+            `SELECT id
+            , name
+            , description
+            , createdAt
+            , updatedAt
+            FROM subreddits
+            ORDER BY createdAt DESC`
+        )
+        .then(result => {
+            return result.map(function(subreddit) {
+                return {
+                    id: subreddit.id,
+                    name: subreddit.name,
+                    description: subreddit.description,
+                    createdAt: subreddit.createdAt,
+                    updatedAt: subreddit.updatedAt
+                }
+            })
+        })
+    }
+
 }
 
 module.exports = RedditAPI;

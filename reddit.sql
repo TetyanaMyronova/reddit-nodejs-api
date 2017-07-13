@@ -21,3 +21,18 @@ CREATE TABLE posts (
   KEY userId (userId), -- why did we add this here? ask me :)
   CONSTRAINT validUser FOREIGN KEY (userId) REFERENCES users (id) ON DELETE SET NULL
 );
+
+-- Create Subreddits table
+CREATE TABLE subreddits (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(30) NOT NULL,
+  description VARCHAR(200) DEFAULT NULL,
+  createdAt DATETIME NOT NULL,
+  updatedAt DATETIME NOT NULL,
+  UNIQUE KEY name (name)
+);
+
+-- Add subredditsId to posts and foreign key constraint.
+ALTER TABLE posts 
+ADD COLUMN subredditId INT AFTER id,
+ADD CONSTRAINT validSubredditId FOREIGN KEY (subredditId) REFERENCES subreddits(id) ON DELETE CASCADE;

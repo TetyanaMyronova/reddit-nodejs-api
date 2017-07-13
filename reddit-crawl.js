@@ -1,3 +1,5 @@
+'use strict'
+
 var request = require('request-promise');
 var mysql = require('promise-mysql');
 var RedditAPI = require('./reddit');

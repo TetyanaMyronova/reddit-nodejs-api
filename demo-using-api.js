@@ -20,7 +20,7 @@ var myReddit = new RedditAPI(connection);
 // We call this function to create a new user to test our API
 // The function will return the newly created user's ID in the callback
 myReddit.createUser({
-    username: 'userName19',
+    username: 'userName38',
     password: 'userPassword1'
 })
     .then(newUserId => {
@@ -31,7 +31,7 @@ myReddit.createUser({
         return myReddit.createPost({
             title: 'Hello Reddit! This is my first post',
             url: 'http://www.digg.com',
-            userId: 1
+            userId: newUserId
         });
     })
     .then(newPostId => {
@@ -40,18 +40,38 @@ myReddit.createUser({
     })
     .catch(error => {
         console.log(error.stack);
+    })
+    .then(function() {
+        return connection.end()
     });
-    // .then(function() {
-    //     return connection.end()
-    // });
 
+//Retrieve all Posts
     myReddit.getAllPosts()
-        .then(function (result) {console.log(result);});
-
+        .then(function(result) {
+            console.log(result);
+        });
 
 //Test insert into subreddits
-/*
-var test = {
-    name : "blah test",
-    description: "blah test desc"
-};*/
+var subreddit = {
+    name: "reddit test3",
+    description: "decription of reddit test"
+};
+   
+    myReddit.createSubreddit(subreddit)
+        .then(function(result) {
+            console.log(result);
+        })
+        .catch(error => {
+            console.log(error);
+        })
+
+
+//Return all Subreddits
+
+    myReddit.getAllSubreddits()
+        .then(function(result) {
+            console.log(result);
+        })
+        .catch(error => {
+            console.log(error);
+        });
