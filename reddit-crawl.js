@@ -4,37 +4,49 @@ var request = require('request-promise');
 var mysql = require('promise-mysql');
 var RedditAPI = require('./reddit');
 
+
 function getSubreddits() {
     return request('https://www.reddit.com/.json')
         .then(response => {
             // Parse response as JSON and store in variable called result
-            var result = JSON.parse(response); // continue this line
+            var result = JSON.parse(response);
 
             // Use .map to return a list of subreddit names (strings) only
-            return response.data.children.map(function(reditchildren) {
-                console.log(reditchildren.data.subreddit);
-                return reditchildren.data.subreddit;
-            })
+            return result.data.children.map(function (child) {
+                //console.log(result.data.children);
+                return child.data.subreddit;
+            });
         });
 }
 
-getSubreddits();
+//getSubreddits();
 
 function getPostsForSubreddit(subredditName) {
-    return request(/* fill in the URL, it will be based on subredditName */)
-        .then(
-            response => {
-                // Parse the response as JSON and store in variable called result
-                var response; // continue this line
+    return request('https://www.reddit.com/r/' + subredditName + '.json')
+        .then(response => {
+            // Parse the response as JSON and store in variable called result
+            var result = JSON.parse(response);
 
-
-                return response.data.children
-                    .filter(/* write a function */) // Use .filter to remove self-posts
-                    .map(/* write a function */) // Use .map to return title/url/user objects only
-
-            }
-        );
+            return result.data.children
+            // Use .filter to remove self-posts
+                .filter(function(child) {
+                    //console.log(child.data.is_self); //Test
+                    return child.data.is_self !== true;
+                }) 
+            // // Use .map to return title, url, user in JSON object
+                .map(function(filteredChild) {
+                    //console.log("Title=" + filteredChild.data.title + " User=" + filteredChild.data.author);
+                    //console.log("url=" + filteredChild.data.url);
+                    return {
+                        title: filteredChild.data.title,
+                        url: filteredChild.data.url,
+                        user: filteredChild.data.author
+                    };
+                }); 
+        });
 }
+
+getPostsForSubreddit('woahdude');
 
 function crawl() {
     // create a connection to the DB

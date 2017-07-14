@@ -6,7 +6,7 @@ var mysql = require('promise-mysql');
 // create a connection to our Cloud9 server
 var connection = mysql.createPool({
     host     : 'localhost',
-    user     : 'tamyr',
+    user     : 'root',
     password : '',
     database: 'reddit',
     connectionLimit: 10
@@ -47,6 +47,7 @@ var myReddit = new RedditAPI(connection);
     });
 */
 
+/*
 //Retrieve all Posts
 myReddit.getAllPosts()
     .then(function(result) {
@@ -55,6 +56,7 @@ myReddit.getAllPosts()
     .catch(error => {
         console.log(error.stack);
     });
+*/
 
 /*
 //Test object of subreddit
