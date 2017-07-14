@@ -45,7 +45,7 @@ var myReddit = new RedditAPI(connection);
     .then(function() {
         return connection.end();
     });
-
+*/
 
 //Retrieve all Posts
 myReddit.getAllPosts()
@@ -56,12 +56,15 @@ myReddit.getAllPosts()
         console.log(error.stack);
     });
 
+/*
 //Test object of subreddit
 var subreddit = {
     name: "reddit test7",
     description: "description of reddit test"
 };
+*/
 
+/*
 //Create Subreddit   
 myReddit.createSubreddit(subreddit)
     .then(newSubRedditId => {

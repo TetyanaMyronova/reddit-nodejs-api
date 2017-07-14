@@ -117,9 +117,11 @@ class RedditAPI {
             , s.description AS subredditDescription
             , s.createdAt AS subredditCreatedAt
             , s.updatedAt AS subredditUpdatedAt
+            , SUM(v.voteDirection) AS voteScore
             FROM posts p
             JOIN users u ON u.id = p.userId
             LEFT JOIN subreddits s ON p.subredditId = s.id
+            LEFT JOIN votes v ON p.id = v.postId
             GROUP BY 
             p.id
             , p.title
@@ -141,6 +143,7 @@ class RedditAPI {
                         id: post.id,
                         title: post.title,
                         url: post.url,
+                        voteScore: post.voteScore,
                         createdAt: post.createdAt,
                         updatedAt: post.updatedAt,
                         subreddit: {
