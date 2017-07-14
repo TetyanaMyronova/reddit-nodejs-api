@@ -5,15 +5,20 @@ var mysql = require('promise-mysql');
 var RedditAPI = require('./reddit');
 
 function getSubreddits() {
-    return request(/* fill in the URL, it's always the same */)
+    return request('https://www.reddit.com/.json')
         .then(response => {
             // Parse response as JSON and store in variable called result
-            var response; // continue this line
+            var result = JSON.parse(response); // continue this line
 
             // Use .map to return a list of subreddit names (strings) only
-            return response.data.children.map(/* write a function */)
+            return response.data.children.map(function(reditchildren) {
+                console.log(reditchildren.data.subreddit);
+                return reditchildren.data.subreddit;
+            })
         });
 }
+
+getSubreddits();
 
 function getPostsForSubreddit(subredditName) {
     return request(/* fill in the URL, it will be based on subredditName */)

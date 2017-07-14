@@ -35,54 +35,23 @@ class RedditAPI {
     }
 
     createPost(post) {
-        return this.conn.query(
-            `
-            INSERT INTO posts (userId, title, url, createdAt, updatedAt)
-            VALUES (?, ?, ?, NOW(), NOW())`,
-            [post.userId, post.title, post.url]
-        )
+        if (post.subredditId === undefined) {
+            throw new Error('SubredditId is missing');
+        }
+        else {
+            return this.conn.query(
+                `
+                INSERT INTO posts (subredditId, userId, title, url, createdAt, updatedAt)
+                VALUES (?, ?, ?, ?, NOW(), NOW())
+                `,
+                [post.subredditId, post.userId, post.title, post.url]
+            )
             .then(result => {
                 return result.insertId;
             });
-    }
-
-    getAllPosts() {
-        /*
-        strings delimited with ` are an ES2015 feature called "template strings".
-        they are more powerful than what we are using them for here. one feature of
-        template strings is that you can write them on multiple lines. if you try to
-        skip a line in a single- or double-quoted string, you would get a syntax error.
-
-        therefore template strings make it very easy to write SQL queries that span multiple
-        lines without having to manually split the string line by line.
-         */
-        return this.conn.query(
-                `
-            SELECT p.id, p.title, p.url, p.userId, p.createdAt, p.updatedAt, u.username as userName, u.createdAt as uCreatedAt, u.updatedAt as uUpdatedAt
-            FROM posts p
-            JOIN users u ON u.id = p.userId
-            ORDER BY p.createdAt DESC
-            LIMIT 25`
-            )
-            .then(result => {
-                return result.map(function(post) {
-                    return {
-                        id: post.id,
-                        title: post.title,
-                        url: post.url,
-                        createdAt: post.createdAt,
-                        updatedAt: post.updatedAt,
-                        user: {
-                            id: post.userId,
-                            name: post.userName,
-                            createdAd: post.uCreatedAt,
-                            updatedAt: post.uUpdatedAt
-                        }
-                    }
-                });
-            });
         }
-        
+    }
+    
     createSubreddit(subreddit) {
         return this.conn.query(
         `
@@ -102,7 +71,77 @@ class RedditAPI {
             }
         });
     }
-    
+
+    getAllPosts() {
+        /*
+        strings delimited with ` are an ES2015 feature called "template strings".
+        they are more powerful than what we are using them for here. one feature of
+        template strings is that you can write them on multiple lines. if you try to
+        skip a line in a single- or double-quoted string, you would get a syntax error.
+
+        therefore template strings make it very easy to write SQL queries that span multiple
+        lines without having to manually split the string line by line.
+         */
+        return this.conn.query(
+                `
+            SELECT p.id
+            , p.title
+            , p.url
+            , p.userId
+            , p.createdAt
+            , p.updatedAt
+            , p.subredditId
+            , u.username as userName
+            , u.createdAt as uCreatedAt
+            , u.updatedAt as uUpdatedAt
+            , s.name AS subredditName
+            , s.description AS subredditDescription
+            , s.createdAt AS subredditCreatedAt
+            , s.updatedAt AS subredditUpdatedAt
+            FROM posts p
+            JOIN users u ON u.id = p.userId
+            LEFT JOIN subreddits s ON p.subredditId = s.id
+            GROUP BY 
+            p.id
+            , p.title
+            , p.url
+            , p.createdAt
+            , p.updatedAt
+            , p.subredditId
+            , p.userId 
+            , s.name
+            , s.description
+            , s.createdAt
+            , s.updatedAt
+            ORDER BY p.createdAt DESC
+            LIMIT 25`
+            )
+            .then(result => {
+                return result.map(function(post) {
+                    return {
+                        id: post.id,
+                        title: post.title,
+                        url: post.url,
+                        createdAt: post.createdAt,
+                        updatedAt: post.updatedAt,
+                        subreddit: {
+                            id: post.subredditId,
+                            name: post.subredditName,
+                            description: post.subredditDescription,
+                            createdAt: post.subredditCreatedAt,
+                            updatedAt: post.subredditUpdatedAt                          
+                        },
+                        user: {
+                            id: post.userId,
+                            name: post.userName,
+                            createdAd: post.uCreatedAt,
+                            updatedAt: post.uUpdatedAt
+                        }
+                    }
+                });
+            });
+        }
+        
     getAllSubreddits() {
         return this.conn.query (
             `SELECT id
