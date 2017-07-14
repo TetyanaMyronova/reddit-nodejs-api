@@ -134,7 +134,7 @@ class RedditAPI {
             , s.description
             , s.createdAt
             , s.updatedAt
-            ORDER BY p.createdAt DESC
+            ORDER BY SUM(v.voteDirection) DESC
             LIMIT 25`
             )
             .then(result => {
