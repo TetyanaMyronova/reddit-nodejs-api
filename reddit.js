@@ -51,7 +51,8 @@ class RedditAPI {
             });
         }
     }
-    
+ 
+// Create Subreddit    
     createSubreddit(subreddit) {
         return this.conn.query(
         `
@@ -70,7 +71,25 @@ class RedditAPI {
                 throw error;
             }
         });
-    }
+    };
+
+    createVote(vote) {
+        switch (vote.voteDirection) {
+            case -1:
+            case 0:
+            case 1:
+                return this.conn.query(
+                    `
+                    INSERT INTO votes (userId, postId, voteDirection, createdAt, updatedAt)
+                    VALUES (?, ?, ?, NOW(), NOW())
+                    ON DUPLICATE KEY UPDATE voteDirection=?, updatedAt=NOW()
+                    `,
+                    [vote.userId, vote.postId, vote.voteDirection, vote.voteDirection]
+                );
+            default:
+                throw Error('Vote direction should be one of the following values (-1,0,1)');
+        }
+    };
 
     getAllPosts() {
         /*
