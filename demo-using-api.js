@@ -15,12 +15,12 @@ var connection = mysql.createPool({
 // load our API and pass it the connection
 var RedditAPI = require('./reddit');
 
-var myReddit = new RedditAPI(connection);
+//var myReddit = new RedditAPI(connection);
 
 // We call this function to create a new user to test our API
 // The function will return the newly created user's ID in the callback
 /*myReddit.createUser({
-    username: 'userName7',
+    username: 'userName8',
     password: 'userPassword1'
 })
     .then(newUserId => {
@@ -88,7 +88,7 @@ myReddit.getAllSubreddits()
 */
     
 //Test object of Vote 
-var vote = {
+/*var vote = {
     userId: 5,
     postId: 4,
     voteDirection: 1
@@ -101,4 +101,4 @@ var vote = {
     })
     .catch(error => {
         console.log(error);
-    });
+    });*/

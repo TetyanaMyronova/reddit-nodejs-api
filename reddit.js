@@ -57,8 +57,10 @@ class RedditAPI {
         return this.conn.query(
         `
             INSERT INTO subreddits(name, description, createdAt, updatedAt)
-            VALUES (?, ?, NOW(), NOW())`,
-            [subreddit.name, subreddit.description]
+            VALUES (?, ?, NOW(), NOW())
+            ON DUPLICATE KEY UPDATE name=?, updatedAt=NOW()`,
+            
+            [subreddit.name, subreddit.description, subreddit.name]
         )
         .then(result => {
             return result.insertId;

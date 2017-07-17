@@ -30,13 +30,13 @@ function getPostsForSubreddit(subredditName) {
             return result.data.children
             // Use .filter to remove self-posts
                 .filter(function(child) {
-                    //console.log(child.data.is_self); //Test
+                    console.log(child.data.is_self); //Test
                     return child.data.is_self !== true;
                 }) 
-            // // Use .map to return title, url, user in JSON object
+            //  Use .map to return title, url, user in JSON object
                 .map(function(filteredChild) {
-                    //console.log("Title=" + filteredChild.data.title + " User=" + filteredChild.data.author);
-                    //console.log("url=" + filteredChild.data.url);
+                    console.log("Title=" + filteredChild.data.title + " User=" + filteredChild.data.author);
+                    // console.log("url=" + filteredChild.data.url);
                     return {
                         title: filteredChild.data.title,
                         url: filteredChild.data.url,
@@ -115,5 +115,7 @@ function crawl() {
                         });
                     });
             });
-        });
+        }) .then (function(){connection.end});
 }
+
+// crawl();
